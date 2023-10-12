@@ -37,13 +37,21 @@ func init() {
 
 func main() {
 	flag.Parse()
-
+	banner()
 	go runPrxy()
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	status := <-quit
+	color.Println("\n\n", color.RedBg(" KILLED ", color.Blk), color.Red("proxy server killed by "+status.String()+" signal."))
+}
+func banner() {
+	split := color.Yellow("============================================")
+	sl := color.Yellow("><><><")
 	color.Println()
-	color.Println(color.RedBg(" KILLED ", color.Blk), color.Red("proxy server killed by "+status.String()+" signal."))
+	color.Println(split)
+	color.Println(" ", color.Green(" PRXY "), sl, color.Yellow("simple proxy server"), sl)
+	color.Println(split)
+	color.Println()
 }
 
 func (itr *interact) tryScan(a *string, inid bool, msg string, errMsg string, validators ...func(string) bool) {
@@ -94,7 +102,8 @@ func runPrxy() {
 	)
 
 	go runProxyServerPrc(prt, hst)
-	color.Println(color.BlueBg(" START ", color.Blk), "request will proxy.", color.Cyan("localhost:"+prt), "⇒", color.Blue(hst))
+	color.Println()
+	color.Println(color.GreenBg(" READY ", color.Blk), "proxy server stared.", color.Cyan("localhost:"+prt), "⇒", color.Blue(hst))
 }
 
 func runProxyServerPrc(port string, forwardHost string) {
